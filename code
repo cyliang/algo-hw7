@@ -2,24 +2,18 @@
 
 import msgpack
 
-def select(plates, remaining):
+def select(plates, remaining, top):
 	if remaining == 0:
 		return 0.0
 
 	accu_expect = 0.0
-	for i in xrange(len(plates)):
-		if(plates[i][1]):
-			break
-
-		plates[i][1] = True
-		accu_expect += plates[i][0] + select(plates, remaining - 1)
-		plates[i][1] = False
+	for i in xrange(top):
+		accu_expect += plates[i] + select(plates, remaining - 1, i)
 	
 	return accu_expect / remaining
 
 def expected_price(plates):
-	plates = [[p, False] for p in plates]
-	return select(plates, len(plates))
+	return select(plates, len(plates), len(plates))
 
 with open("input.txt", "rb") as input_file, open("output.txt", "wb") as output_file:
 	inPack = msgpack.Unpacker(input_file, use_list = True)
