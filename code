@@ -2,17 +2,24 @@
 
 import msgpack
 
+DP_work = None
+
 def select(plates, remaining, top):
 	if remaining == 0:
 		return 0.0
 
-	accu_expect = 0.0
-	for i in xrange(top):
-		accu_expect += plates[i] + select(plates, remaining - 1, i)
+	if DP_work[remaining][top] is None:
+		accu_expect = 0.0
+		for i in xrange(top):
+			accu_expect += plates[i] + select(plates, remaining - 1, i)
 	
-	return accu_expect / remaining
+		DP_work[remaining][top] = accu_expect / remaining
+	
+	return DP_work[remaining][top]
 
 def expected_price(plates):
+	global DP_work
+	DP_work = [[None] * (len(plates) + 1) for i in xrange(len(plates) + 1)]
 	return select(plates, len(plates), len(plates))
 
 with open("input.txt", "rb") as input_file, open("output.txt", "wb") as output_file:
