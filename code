@@ -6,14 +6,13 @@ def expected_price(plates):
 	DP_work = [[float(plates[0]) / i for i in xrange(len(plates), 0, -1)]]
 	DP_work += [[0.0] * x for x in xrange(len(plates) - 1, 0, -1)]
 
-	for largest_available in xrange(1, len(plates)):
-		for num_on in xrange(0, len(plates) - largest_available):
-			exp = plates[largest_available]
-			for select in xrange(0, largest_available):
-				exp += DP_work[select][num_on + 1]
+	for remaining in xrange(2, len(plates)+1):
+		num_on = len(plates) - remaining
+		next_exp = 0.0
+		for largest_available in xrange(1, remaining):
+			next_exp += DP_work[largest_available - 1][num_on + 1]
+			DP_work[largest_available][num_on] = (plates[largest_available] + next_exp) / remaining
 
-			DP_work[largest_available][num_on] = exp / (len(plates) - num_on)
-	
 	exp = 0.0
 	for select in DP_work:
 		exp += select[0]
