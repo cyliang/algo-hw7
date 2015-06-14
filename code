@@ -3,21 +3,16 @@
 import msgpack
 
 def expected_price(plates):
-	DP_work = [[float(plates[0]) / i for i in xrange(len(plates), 0, -1)]]
-	DP_work += [[0.0] * x for x in xrange(len(plates) - 1, 0, -1)]
+	DP_work = [[0.0] * x for x in xrange(len(plates) + 1, 0, -1)]
 
-	for remaining in xrange(2, len(plates)+1):
+	for remaining in xrange(1, len(plates)+1):
 		num_on = len(plates) - remaining
 		next_exp = 0.0
-		for largest_available in xrange(1, remaining):
-			next_exp += DP_work[largest_available - 1][num_on + 1]
-			DP_work[largest_available][num_on] = (plates[largest_available] + next_exp) / remaining
+		for largest_available in xrange(1, remaining + 1):
+			next_exp += DP_work[num_on + 1][largest_available - 1]
+			DP_work[num_on][largest_available] = (plates[largest_available - 1] + next_exp) / remaining
 
-	exp = 0.0
-	for select in DP_work:
-		exp += select[0]
-
-	return exp
+	return sum(DP_work[0])
 
 with open("input.txt", "rb") as input_file, open("output.txt", "wb") as output_file:
 	inPack = msgpack.Unpacker(input_file, use_list = True)
